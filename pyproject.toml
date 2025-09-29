@@ -1,0 +1,9 @@
+[project]
+name = "setzerosync"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "impacket>=0.12.0",
+    "ldap3>=2.9.1",
+]
